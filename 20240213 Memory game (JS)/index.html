@@ -26,18 +26,27 @@
 </head>
 <html>
   <body>
-    <form id="myForm">
-      <h1>Choose difficulty</h1>
-      <input type="radio" name="diff" id="easyDiff" value="unlimited" checked />
-      <label class="level-label" for="easyDiff">Easy - unlimited moves</label>
-      <br />
-      <input type="radio" name="diff" id="medDiff" value="20" />
-      <label class="level-label" for="medDiff">Medium - 20 moves</label>
-      <br />
-      <input type="radio" name="diff" id="hardDiff" value="12" />
-      <label class="level-label" for="hardDiff">Hard - 12 moves</label>
-      <br />
-    </form>
+    <main>
+      <h5 class="turn-counter">Moves: 0</h5>
+      <form id="myForm">
+        <h1>Choose difficulty</h1>
+        <input
+          type="radio"
+          name="diff"
+          id="easyDiff"
+          value="unlimited"
+          checked
+        />
+        <label class="level-label" for="easyDiff">Easy - unlimited moves</label>
+        <br />
+        <input type="radio" name="diff" id="medDiff" value="20" />
+        <label class="level-label" for="medDiff">Medium - 20 moves</label>
+        <br />
+        <input type="radio" name="diff" id="hardDiff" value="12" />
+        <label class="level-label" for="hardDiff">Hard - 12 moves</label>
+        <br />
+      </form>
+    </main>
     <script src="./index.js"></script>
   </body>
 </html>

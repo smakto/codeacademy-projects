@@ -1,53 +1,75 @@
-let mainGameCreate = document.createElement("main");
-const countTurns = document.createElement("h5");
-countTurns.setAttribute("class", "turn-counter");
+let mainGame = document.querySelector("main");
+let turnCounter = document.querySelector("h5.turn-counter");
 
-document.body.append(mainGameCreate);
-mainGameCreate.append(countTurns);
+let hardDifficulty = document.getElementById("hardDiff");
+let medDifficulty = document.getElementById("medDiff");
 
-function createBase() {
-  let symbolArray = ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"];
+let symbolArrayEasy = ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"];
+let symbolArrayMedium = [
+  "🌠",
+  "🏹",
+  "⌛",
+  "🏹",
+  "💌",
+  "❤️️",
+  "🍀",
+  "🌠",
+  "🍀",
+  "💌",
+  "❤️️",
+  "⌛",
+];
+let symbolArrayHard = [
+  "🌠",
+  "🌴",
+  "🏠",
+  "🏹",
+  "⌛",
+  "🏹",
+  "💌",
+  "❤️️",
+  "🍀",
+  "🧲️",
+  "🌠",
+  "🍀",
+  "💌",
+  "🌴",
+  "❤️️",
+  "⌛",
+  "🧲️",
+  "🏠",
+];
 
-  for (let i = 8; i > 0; i--) {
+let counter = 0;
+let clicked = [];
+let pairs = [];
+
+function createBase(symbols) {
+  for (let i = symbols.length; i > 0; i--) {
     let createDiv = document.createElement("div");
-    let createPara = document.createElement("p");
-    mainGameCreate.appendChild(createDiv);
-    createDiv.appendChild(createPara);
+    createDiv.setAttribute("class", "cardDiv");
+    let createIcon = document.createElement("p");
+    mainGame.appendChild(createDiv);
+    createDiv.appendChild(createIcon);
     const randSelector = Math.floor(Math.random() * i);
-    createPara.textContent = symbolArray[randSelector];
-    symbolArray.splice(randSelector, 1);
+    createIcon.textContent = symbols[randSelector];
+    symbols.splice(randSelector, 1);
   }
 }
-
-function stylesOfGame() {
-  const myDivs = document.querySelectorAll("div");
-  for (let i = 0; i < myDivs.length; i++) {
-    let cardDiv = myDivs[i];
-    cardDiv.setAttribute("class", "cardDiv");
-    countTurns.textContent = "Moves: 0";
-  }
-}
-
-createBase();
-stylesOfGame();
 
 function theGame() {
-  const symbolDiv = document.querySelectorAll("div");
-  const symbolClick = document.querySelectorAll("p");
+  const symbolDiv = document.querySelectorAll("div.cardDiv");
+  const iconSymbol = document.querySelectorAll("p");
 
-  let counter = 0;
-  let clicked = [];
-  let pairs = [];
+  iconSymbol.forEach((item) => (item.style.display = "none"));
 
-  symbolClick.forEach((item) => (item.style.display = "none"));
-
-  for (let i = 0; i < 8; i++) {
-    symbolDiv[i].addEventListener("click", (event) => {
-      if (symbolClick[i].style.display === "none") {
-        symbolClick[i].style.display = "block";
+  for (let i = 0; i < symbolDiv.length; i++) {
+    symbolDiv[i].addEventListener("click", () => {
+      if (iconSymbol[i].style.display === "none") {
+        iconSymbol[i].style.display = "block";
         counter += 1;
-        clicked.push(symbolClick[i]);
-        countTurns.textContent = "Moves: " + clicked.length;
+        clicked.push(iconSymbol[i]);
+        turnCounter.textContent = "Moves: " + clicked.length;
 
         for (let j = 1; j < clicked.length; j += 2) {
           let plusJ = j - 1;
@@ -62,44 +84,18 @@ function theGame() {
 
           pairs.forEach((item) => (item.style.display = "block"));
 
-          if (pairs.length === 8) {
-            winMsg = document.createElement("h1");
-            winMsg.setAttribute("class", "win-message");
-            document.body.append(winMsg);
-            winMsg.textContent = "WIN! " + "Moves: " + clicked.length;
-            countTurns.style.display = "none";
+          if (pairs.length === symbolDiv.length) {
+            showWinMessage();
           }
 
           if (counter > 2) {
-            symbolClick.forEach((item) => (item.style.display = "none"));
+            iconSymbol.forEach((item) => (item.style.display = "none"));
             counter = 1;
-            symbolClick[i].style.display = "block";
+            iconSymbol[i].style.display = "block";
           }
 
-          let hardDifficulty = document.getElementById("hardDiff");
-          let medDifficulty = document.getElementById("medDiff");
-          let loseMsg = document.createElement("h2");
-          loseMsg.setAttribute("class", "lose-message");
-          loseMsg.textContent = "LOST";
-
-          if (hardDifficulty.checked && hardDifficulty.value < clicked.length) {
-            symbolClick.forEach((item) => (item.style.display = "none"));
-            countTurns.style.display = "none";
-            document.body.append(loseMsg);
-            setTimeout(function () {
-              location.reload();
-            }, 1500);
-            return;
-          } else if (
-            medDifficulty.checked &&
-            medDifficulty.value < clicked.length
-          ) {
-            countTurns.style.display = "none";
-            symbolClick.forEach((item) => (item.style.display = "none"));
-            document.body.append(loseMsg);
-            setTimeout(function () {
-              location.reload();
-            }, 1500);
+          if (hardDifficulty.checked || medDifficulty.checked) {
+            manageTurns();
             return;
           }
         }
@@ -108,13 +104,43 @@ function theGame() {
   }
 }
 
+function manageTurns() {
+  if (hardDifficulty.checked && hardDifficulty.value < clicked.length) {
+    showLoseMessage();
+  } else if (medDifficulty.checked && medDifficulty.value < clicked.length) {
+    showLoseMessage();
+  }
+}
+
+function showWinMessage() {
+  winMsg = document.createElement("h1");
+  winMsg.setAttribute("class", "win-message");
+  document.body.append(winMsg);
+  winMsg.textContent = "WIN! " + "Moves: " + clicked.length;
+  turnCounter.style.display = "none";
+}
+
+function showLoseMessage() {
+  let loseMsg = document.createElement("h2");
+  loseMsg.setAttribute("class", "lose-message");
+  loseMsg.textContent = "LOST";
+  turnCounter.style.display = "none";
+  document.body.append(loseMsg);
+  setTimeout(function () {
+    location.reload();
+  }, 2500);
+}
+
+createBase(symbolArrayEasy);
 theGame();
 
 /// TODO: 1. Pataisyti, kad atspėjus pirmą kartą taip pat užsifiksuotų. +++ +++
 /// TODO: 2. WIN alert. +++ +++
 /// TODO: 3. Timer. (setInterval).
-/// TODO: 4. Difficulty setting. +++ +++ (Patobulinti? Resetint kai yra LOST?)
-/// TODO: 5. Reset button. (location.reset???)
+/// TODO: 4. Difficulty setting. +++ +++
+/// TODO: 5. Reset button.
 /// TODO: 6. Cardflip (css).
-/// TODO: 7. Prisidėti klases stiliams.
-/// TODO: 8. Paoptimizuoti kodą. Perdėti į Objektą viską?
+/// TODO: 7. Prisidėti klases stiliams. +++ +++
+/// TODO: 8. Paoptimizuoti kodą.
+/// TODO: 9. Kortelių skaičiaus pasirinkimas.
+/// TODO: 10. Laiko limito pasirinkimas.
