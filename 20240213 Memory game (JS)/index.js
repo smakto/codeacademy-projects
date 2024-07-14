@@ -1,5 +1,6 @@
 let mainGame = document.querySelector("main");
 let turnCounter = document.querySelector("h5.turn-counter");
+let introForm = document.querySelector("form");
 
 let hardDifficulty = document.getElementById("hardDiff");
 let medDifficulty = document.getElementById("medDiff");
@@ -21,7 +22,6 @@ let symbolArrayMedium = [
 ];
 let symbolArrayHard = [
   "🌠",
-  "🌴",
   "🏠",
   "🏹",
   "⌛",
@@ -33,7 +33,6 @@ let symbolArrayHard = [
   "🌠",
   "🍀",
   "💌",
-  "🌴",
   "❤️️",
   "⌛",
   "🧲️",
@@ -73,6 +72,7 @@ function theGame() {
 
         for (let j = 1; j < clicked.length; j += 2) {
           let plusJ = j - 1;
+          console.log(j);
           if (
             clicked[j].textContent === clicked[plusJ].textContent &&
             !pairs.includes(clicked[j])
@@ -83,6 +83,7 @@ function theGame() {
           }
 
           pairs.forEach((item) => (item.style.display = "block"));
+          console.log("Pairs", pairs);
 
           if (pairs.length === symbolDiv.length) {
             showWinMessage();
@@ -93,21 +94,16 @@ function theGame() {
             counter = 1;
             iconSymbol[i].style.display = "block";
           }
-
-          if (hardDifficulty.checked || medDifficulty.checked) {
-            manageTurns();
-            return;
-          }
         }
       }
+      manageTurns();
     });
   }
 }
 
 function manageTurns() {
-  if (hardDifficulty.checked && hardDifficulty.value < clicked.length) {
-    showLoseMessage();
-  } else if (medDifficulty.checked && medDifficulty.value < clicked.length) {
+  let selectedMoveCount = document.querySelector(`[name="diff"]:checked`).value;
+  if (selectedMoveCount !== "unlimited" && selectedMoveCount < clicked.length) {
     showLoseMessage();
   }
 }
@@ -131,8 +127,23 @@ function showLoseMessage() {
   }, 2500);
 }
 
-createBase(symbolArrayEasy);
-theGame();
+introForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  let selectedBoardSize = document.querySelector(
+    `[name="boardSize"]:checked`
+  ).value;
+
+  introForm.style.display = "none";
+
+  createBase(
+    selectedBoardSize === "smallBoard"
+      ? symbolArrayEasy
+      : selectedBoardSize === "medBoard"
+      ? symbolArrayMedium
+      : symbolArrayHard
+  );
+  theGame();
+});
 
 /// TODO: 1. Pataisyti, kad atspėjus pirmą kartą taip pat užsifiksuotų. +++ +++
 /// TODO: 2. WIN alert. +++ +++

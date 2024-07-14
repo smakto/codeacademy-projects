@@ -29,22 +29,44 @@
     <main>
       <h5 class="turn-counter">Moves: 0</h5>
       <form id="myForm">
-        <h1>Choose difficulty</h1>
-        <input
-          type="radio"
-          name="diff"
-          id="easyDiff"
-          value="unlimited"
-          checked
-        />
-        <label class="level-label" for="easyDiff">Easy - unlimited moves</label>
-        <br />
-        <input type="radio" name="diff" id="medDiff" value="20" />
-        <label class="level-label" for="medDiff">Medium - 20 moves</label>
-        <br />
-        <input type="radio" name="diff" id="hardDiff" value="12" />
-        <label class="level-label" for="hardDiff">Hard - 12 moves</label>
-        <br />
+        <div class="move-limit">
+          <h1>Move limit</h1>
+          <input type="radio" name="diff" id="easyDiff" value="unlimited" />
+          <label class="level-label" for="easyDiff"
+            >Easy - unlimited moves</label
+          >
+          <br />
+          <input type="radio" name="diff" id="medDiff" value="20" checked />
+          <label class="level-label" for="medDiff">Medium - 20 moves</label>
+          <br />
+          <input type="radio" name="diff" id="hardDiff" value="12" />
+          <label class="level-label" for="hardDiff">Hard - 12 moves</label>
+          <br />
+        </div>
+
+        <div class="board-size">
+          <h1>Board size</h1>
+          <input
+            type="radio"
+            name="boardSize"
+            id="smallBoard"
+            value="smallBoard"
+            checked
+          />
+          <label class="board-size-label" for="smallBoard"
+            >Small - 4 pairs</label
+          >
+          <br />
+          <input type="radio" name="boardSize" id="medBoard" value="medBoard" />
+          <label class="board-size-label" for="medBoard"
+            >Medium - 6 pairs</label
+          >
+          <br />
+          <input type="radio" name="boardSize" id="bigBoard" value="bigBoard" />
+          <label class="board-size-label" for="bigBoard">Hard - 8 pairs</label>
+          <br />
+        </div>
+        <input type="submit" value="Start" />
       </form>
     </main>
     <script src="./index.js"></script>
