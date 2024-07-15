@@ -1,17 +1,20 @@
 body {
-  position: relative;
-  background: yellow;
+  font-family: "Kanit", sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #e5e5f7;
+  opacity: 0.8;
+  background-image: radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px);
+  background-size: 10px 10px;
 }
 
 main {
-  border: 1px solid black;
+  display: none;
   width: 50%;
   padding: 40px;
-  display: flex;
   justify-content: center;
   flex-wrap: wrap;
   margin-left: 20%;
-  background: rgb(35, 215, 215);
 }
 
 .cardDiv {
@@ -20,51 +23,84 @@ main {
   padding: 15px;
   margin: 25px;
   width: 45px;
-  height: 100px;
-  background: pink;
+  height: 50px;
+  background: rgb(241, 241, 241);
   border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.turn-counter {
+.cardDiv p {
+  transition: visibility 0.1s;
+}
+
+.turns-and-time {
   position: absolute;
   bottom: 0;
+  display: flex;
+  justify-content: space-around;
+  width: 30%;
   color: purple;
+  font-size: larger;
 }
 
 .win-message {
   color: purple;
   margin-left: 30%;
-  font: italic bold 60px arial, serif;
+  font: italic bold 60px;
   margin-top: -255px;
 }
 
 .lose-message {
   color: red;
   margin-left: 30%;
-  font: italic bold 160px arial, serif;
+  font: italic bold 160px;
   margin-top: -300px;
 }
 
 #myForm {
-  position: fixed;
-  top: 25px;
-  left: 20px;
-  width: 300px;
+  color: purple;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+#myForm h3 {
+  margin: 10px;
 }
 
 #myForm input {
   display: inline-block;
 }
 
-#myForm h1 {
-  font: italic bold 24px arial, serif;
+.level-label,
+.board-size-label {
+  font: italic 16px;
+}
+
+.diff-selection {
+  display: flex;
+  justify-content: space-around;
+  width: 80%;
+}
+
+.diff-selection h2 {
+  text-align: center;
+}
+
+input[type="submit"] {
+  margin-top: 25px;
+  padding: 5px 10px;
   color: purple;
 }
 
-.level-label {
-  color: purple;
-  font: italic 16px arial, serif;
+input[type="submit"]:hover {
+  background-color: purple;
+  color: white;
+  border: none;
+  border-radius: 2px;
 }

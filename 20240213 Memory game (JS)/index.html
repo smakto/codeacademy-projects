@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="style.css" />
@@ -27,10 +27,20 @@
 <html>
   <body>
     <main>
-      <h5 class="turn-counter">Moves: 0</h5>
-      <form id="myForm">
+      <div class="turns-and-time">
+        <h5 class="turn-counter">Moves: 0</h5>
+        <h5 class="timer">Time: 00:00</h5>
+      </div>
+    </main>
+    <form id="myForm">
+      <h1>Welcome to memory game!</h1>
+      <h3>1. Choose game difficulty</h3>
+      <h3>2. Click "START"</h3>
+      <h3>3. Have fun!</h3>
+
+      <div class="diff-selection">
         <div class="move-limit">
-          <h1>Move limit</h1>
+          <h2>Move limit</h2>
           <input type="radio" name="diff" id="easyDiff" value="unlimited" />
           <label class="level-label" for="easyDiff"
             >Easy - unlimited moves</label
@@ -43,9 +53,8 @@
           <label class="level-label" for="hardDiff">Hard - 12 moves</label>
           <br />
         </div>
-
         <div class="board-size">
-          <h1>Board size</h1>
+          <h2>Board size</h2>
           <input
             type="radio"
             name="boardSize"
@@ -66,9 +75,9 @@
           <label class="board-size-label" for="bigBoard">Hard - 8 pairs</label>
           <br />
         </div>
-        <input type="submit" value="Start" />
-      </form>
-    </main>
+      </div>
+      <input type="submit" value="Start" />
+    </form>
     <script src="./index.js"></script>
   </body>
 </html>

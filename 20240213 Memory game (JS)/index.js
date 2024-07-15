@@ -60,19 +60,22 @@ function theGame() {
   const symbolDiv = document.querySelectorAll("div.cardDiv");
   const iconSymbol = document.querySelectorAll("p");
 
-  iconSymbol.forEach((item) => (item.style.display = "none"));
+  // iconSymbol.forEach((item) => (item.style.display = "none"));
+  iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
 
   for (let i = 0; i < symbolDiv.length; i++) {
     symbolDiv[i].addEventListener("click", () => {
-      if (iconSymbol[i].style.display === "none") {
-        iconSymbol[i].style.display = "block";
+      // if (iconSymbol[i].style.display === "none")
+      if (iconSymbol[i].style.visibility === "hidden") {
+        // iconSymbol[i].style.display = "block";
+        iconSymbol[i].style.visibility = "visible";
+
         counter += 1;
         clicked.push(iconSymbol[i]);
         turnCounter.textContent = "Moves: " + clicked.length;
 
         for (let j = 1; j < clicked.length; j += 2) {
           let plusJ = j - 1;
-          console.log(j);
           if (
             clicked[j].textContent === clicked[plusJ].textContent &&
             !pairs.includes(clicked[j])
@@ -82,17 +85,21 @@ function theGame() {
             counter = 0;
           }
 
-          pairs.forEach((item) => (item.style.display = "block"));
-          console.log("Pairs", pairs);
+          // pairs.forEach((item) => (item.style.display = "block"));
+          pairs.forEach((item) => (item.style.visibility = "visible"));
 
           if (pairs.length === symbolDiv.length) {
             showWinMessage();
           }
 
           if (counter > 2) {
-            iconSymbol.forEach((item) => (item.style.display = "none"));
+            // iconSymbol.forEach((item) => (item.style.display = "none"));
+            iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
+
             counter = 1;
-            iconSymbol[i].style.display = "block";
+            // iconSymbol[i].style.display = "block";
+
+            iconSymbol[i].style.visibility = "visible";
           }
         }
       }
@@ -134,6 +141,7 @@ introForm.addEventListener("submit", (event) => {
   ).value;
 
   introForm.style.display = "none";
+  mainGame.style.display = "flex";
 
   createBase(
     selectedBoardSize === "smallBoard"
@@ -143,15 +151,35 @@ introForm.addEventListener("submit", (event) => {
       : symbolArrayHard
   );
   theGame();
+  countTime();
 });
+
+let minutes = 0;
+let seconds = 0;
+
+function countTime() {
+  setInterval(function () {
+    seconds += 1;
+    if (seconds === 60) {
+      seconds = 0;
+      minutes += 1;
+    }
+    let secondsToShow = seconds < 10 ? `0${seconds}` : seconds;
+    let minutesToShow = minutes < 10 ? `0${minutes}` : minutes;
+
+    document.querySelector(
+      ".timer"
+    ).textContent = `Time:  ${minutesToShow}:${secondsToShow}`;
+  }, 1000);
+}
 
 /// TODO: 1. Pataisyti, kad atspėjus pirmą kartą taip pat užsifiksuotų. +++ +++
 /// TODO: 2. WIN alert. +++ +++
-/// TODO: 3. Timer. (setInterval).
+/// TODO: 3. Timer. (setInterval). +++ +++
 /// TODO: 4. Difficulty setting. +++ +++
 /// TODO: 5. Reset button.
 /// TODO: 6. Cardflip (css).
 /// TODO: 7. Prisidėti klases stiliams. +++ +++
 /// TODO: 8. Paoptimizuoti kodą.
-/// TODO: 9. Kortelių skaičiaus pasirinkimas.
+/// TODO: 9. Kortelių skaičiaus pasirinkimas. +++ +++
 /// TODO: 10. Laiko limito pasirinkimas.
