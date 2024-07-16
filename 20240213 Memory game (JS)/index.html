@@ -27,6 +27,8 @@
 <html>
   <body>
     <main>
+      <button class="reset-button">RESET</button>
+
       <div class="turns-and-time">
         <h5 class="turn-counter">Moves: 0</h5>
         <h5 class="timer">Time: 00:00</h5>
@@ -53,6 +55,31 @@
           <label class="level-label" for="hardDiff">Hard - 12 moves</label>
           <br />
         </div>
+
+        <div class="time-limit">
+          <h2>Time limit</h2>
+          <input
+            type="radio"
+            name="time"
+            id="unlimitedTime"
+            value="unlimited"
+          />
+          <label class="time-limit-label" for="unlimitedTime"
+            >Easy - unlimited time</label
+          >
+          <br />
+          <input type="radio" name="time" id="medTime" value="60" checked />
+          <label class="time-limit-label" for="medTime"
+            >Medium - 60 seconds</label
+          >
+          <br />
+          <input type="radio" name="time" id="hardTime" value="30" />
+          <label class="time-limit-label" for="hardTime"
+            >Hard - 30 seconds</label
+          >
+          <br />
+        </div>
+
         <div class="board-size">
           <h2>Board size</h2>
           <input

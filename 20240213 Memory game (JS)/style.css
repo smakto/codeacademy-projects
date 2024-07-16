@@ -15,6 +15,7 @@ main {
   justify-content: center;
   flex-wrap: wrap;
   margin-left: 20%;
+  /* position: relative; */
 }
 
 .cardDiv {
@@ -77,11 +78,6 @@ main {
   display: inline-block;
 }
 
-.level-label,
-.board-size-label {
-  font: italic 16px;
-}
-
 .diff-selection {
   display: flex;
   justify-content: space-around;
@@ -98,9 +94,17 @@ input[type="submit"] {
   color: purple;
 }
 
-input[type="submit"]:hover {
+input[type="submit"]:hover,
+.reset-button:hover {
+  transform: scale(1.2);
+  transition: 0.1s linear;
   background-color: purple;
   color: white;
   border: none;
   border-radius: 2px;
+}
+
+.reset-button {
+  position: fixed;
+  bottom: 150px;
 }

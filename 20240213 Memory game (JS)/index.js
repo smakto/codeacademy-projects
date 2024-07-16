@@ -5,6 +5,9 @@ let introForm = document.querySelector("form");
 let hardDifficulty = document.getElementById("hardDiff");
 let medDifficulty = document.getElementById("medDiff");
 
+let symbolDiv;
+let iconSymbol;
+
 let symbolArrayEasy = ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"];
 let symbolArrayMedium = [
   "🌠",
@@ -57,17 +60,14 @@ function createBase(symbols) {
 }
 
 function theGame() {
-  const symbolDiv = document.querySelectorAll("div.cardDiv");
-  const iconSymbol = document.querySelectorAll("p");
+  symbolDiv = document.querySelectorAll("div.cardDiv");
+  iconSymbol = document.querySelectorAll("p");
 
-  // iconSymbol.forEach((item) => (item.style.display = "none"));
   iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
 
   for (let i = 0; i < symbolDiv.length; i++) {
     symbolDiv[i].addEventListener("click", () => {
-      // if (iconSymbol[i].style.display === "none")
       if (iconSymbol[i].style.visibility === "hidden") {
-        // iconSymbol[i].style.display = "block";
         iconSymbol[i].style.visibility = "visible";
 
         counter += 1;
@@ -85,7 +85,6 @@ function theGame() {
             counter = 0;
           }
 
-          // pairs.forEach((item) => (item.style.display = "block"));
           pairs.forEach((item) => (item.style.visibility = "visible"));
 
           if (pairs.length === symbolDiv.length) {
@@ -93,12 +92,8 @@ function theGame() {
           }
 
           if (counter > 2) {
-            // iconSymbol.forEach((item) => (item.style.display = "none"));
             iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
-
             counter = 1;
-            // iconSymbol[i].style.display = "block";
-
             iconSymbol[i].style.visibility = "visible";
           }
         }
@@ -131,7 +126,7 @@ function showLoseMessage() {
   document.body.append(loseMsg);
   setTimeout(function () {
     location.reload();
-  }, 2500);
+  }, 5000);
 }
 
 introForm.addEventListener("submit", (event) => {
@@ -167,19 +162,33 @@ function countTime() {
     let secondsToShow = seconds < 10 ? `0${seconds}` : seconds;
     let minutesToShow = minutes < 10 ? `0${minutes}` : minutes;
 
+    let selectedTimeLimit = document.querySelector(
+      `[name="time"]:checked`
+    ).value;
+
+    if (Number(selectedTimeLimit) === seconds) {
+      showLoseMessage();
+      clearInterval();
+    }
+
     document.querySelector(
       ".timer"
     ).textContent = `Time:  ${minutesToShow}:${secondsToShow}`;
   }, 1000);
 }
 
-/// TODO: 1. Pataisyti, kad atspėjus pirmą kartą taip pat užsifiksuotų. +++ +++
-/// TODO: 2. WIN alert. +++ +++
-/// TODO: 3. Timer. (setInterval). +++ +++
-/// TODO: 4. Difficulty setting. +++ +++
-/// TODO: 5. Reset button.
-/// TODO: 6. Cardflip (css).
-/// TODO: 7. Prisidėti klases stiliams. +++ +++
-/// TODO: 8. Paoptimizuoti kodą.
-/// TODO: 9. Kortelių skaičiaus pasirinkimas. +++ +++
-/// TODO: 10. Laiko limito pasirinkimas.
+function resetGame() {
+  if (minutes > 0) {
+    minutes = -1;
+  }
+  seconds = -1;
+  counter = 0;
+  clicked = [];
+  pairs = [];
+  turnCounter.textContent = "Moves: 0";
+  iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
+}
+
+document.querySelector(".reset-button").addEventListener("click", () => {
+  resetGame();
+});
