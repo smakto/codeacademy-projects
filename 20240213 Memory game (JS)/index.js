@@ -114,6 +114,10 @@ function showWinMessage() {
   winMsg = document.createElement("h1");
   winMsg.setAttribute("class", "win-message");
   document.body.append(winMsg);
+  results.won += 1;
+  results.bestTime = `${minutesToShow}:${secondsToShow}`;
+  localStorage.setItem("personalResults", JSON.stringify(results));
+  clearInterval(intervalTimer);
   winMsg.textContent = "WIN! " + "Moves: " + clicked.length;
   turnCounter.style.display = "none";
 }
@@ -123,10 +127,13 @@ function showLoseMessage() {
   loseMsg.setAttribute("class", "lose-message");
   loseMsg.textContent = "LOST";
   turnCounter.style.display = "none";
+  results.lost += 1;
+  localStorage.setItem("personalResults", JSON.stringify(results));
+  clearInterval(intervalTimer);
   document.body.append(loseMsg);
-  setTimeout(function () {
-    location.reload();
-  }, 5000);
+  // setTimeout(function () {
+  //   location.reload();
+  // }, 5000);
 }
 
 introForm.addEventListener("submit", (event) => {
@@ -149,18 +156,21 @@ introForm.addEventListener("submit", (event) => {
   countTime();
 });
 
+let intervalTimer;
 let minutes = 0;
 let seconds = 0;
+let secondsToShow;
+let minutesToShow;
 
 function countTime() {
-  setInterval(function () {
+  intervalTimer = setInterval(function () {
     seconds += 1;
     if (seconds === 60) {
       seconds = 0;
       minutes += 1;
     }
-    let secondsToShow = seconds < 10 ? `0${seconds}` : seconds;
-    let minutesToShow = minutes < 10 ? `0${minutes}` : minutes;
+    secondsToShow = seconds < 10 ? `0${seconds}` : seconds;
+    minutesToShow = minutes < 10 ? `0${minutes}` : minutes;
 
     let selectedTimeLimit = document.querySelector(
       `[name="time"]:checked`
@@ -192,3 +202,20 @@ function resetGame() {
 document.querySelector(".reset-button").addEventListener("click", () => {
   resetGame();
 });
+
+///////// Personal results @ local storage
+
+let results;
+
+function loadResults() {
+  results =
+    window.localStorage.length > 0
+      ? JSON.parse(localStorage.getItem("personalResults"))
+      : { won: 0, lost: 0, bestTime: 0 };
+  console.log(results.bestTime);
+}
+loadResults();
+
+document.querySelector(
+  ".testShowResults"
+).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;

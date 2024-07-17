@@ -108,3 +108,32 @@ input[type="submit"]:hover,
   position: fixed;
   bottom: 150px;
 }
+
+.testShowResults {
+  position: fixed;
+  bottom: 100px;
+}
+
+/* Modal for won/lost screen */
+/* Modal for won/lost screen */
+/* Modal for won/lost screen */
+
+.resultScreen {
+  display: none;
+  position: fixed;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(124, 123, 123);
+}
+
+.resultScreenBox {
+  top: 25%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  position: absolute;
+  width: 50%;
+  min-height: 50%;
+  background-color: white;
+}
