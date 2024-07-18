@@ -115,7 +115,10 @@ function showWinMessage() {
   winMsg.setAttribute("class", "win-message");
   document.body.append(winMsg);
   results.won += 1;
-  results.bestTime = `${minutesToShow}:${secondsToShow}`;
+  let checkTime = compareTime();
+  if (checkTime) {
+    results.bestTime = `${minutesToShow}:${secondsToShow}`;
+  }
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
   winMsg.textContent = "WIN! " + "Moves: " + clicked.length;
@@ -125,12 +128,13 @@ function showWinMessage() {
 function showLoseMessage() {
   let loseMsg = document.createElement("h2");
   loseMsg.setAttribute("class", "lose-message");
-  loseMsg.textContent = "LOST";
+  loseMsg.textContent = `LOST! Moves ${clicked.length}.  Time ${minutesToShow}:${secondsToShow}`;
   turnCounter.style.display = "none";
   results.lost += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
-  document.body.append(loseMsg);
+  document.querySelector(".resultScreen").style.display = "block";
+  document.querySelector(".resultScreenBox").append(loseMsg);
   // setTimeout(function () {
   //   location.reload();
   // }, 5000);
@@ -219,3 +223,17 @@ loadResults();
 document.querySelector(
   ".testShowResults"
 ).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
+
+async function compareTime() {
+  let currentBestTime = results.bestTime;
+  const currentBestSplit = currentBestTime.split(":");
+  let bestSplitNumber = currentBestSplit.map((item) => (item = Number(item)));
+
+  let bestTimeInSeconds = bestSplitNumber[0] * 60 + bestSplitNumber[1];
+  let currentTimeInSeconds = minutes * 60 + seconds;
+
+  let isTimeBetter = bestTimeInSeconds > currentTimeInSeconds ? true : false;
+  return isTimeBetter;
+}
+
+compareTime();

@@ -55,9 +55,9 @@ main {
 
 .lose-message {
   color: red;
-  margin-left: 30%;
+  margin: 0 auto;
   font: italic bold 160px;
-  margin-top: -300px;
+  /* margin-top: -300px; */
 }
 
 #myForm {
