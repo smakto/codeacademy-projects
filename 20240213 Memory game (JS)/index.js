@@ -1,4 +1,4 @@
-let mainGame = document.querySelector("main");
+let mainGame = document.querySelector(".main-game-board");
 let turnCounter = document.querySelector("h5.turn-counter");
 let introForm = document.querySelector("form");
 
@@ -8,100 +8,142 @@ let medDifficulty = document.getElementById("medDiff");
 let symbolDiv;
 let iconSymbol;
 
-let symbolArrayEasy = ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"];
-let symbolArrayMedium = [
-  "🌠",
-  "🏹",
-  "⌛",
-  "🏹",
-  "💌",
-  "❤️️",
-  "🍀",
-  "🌠",
-  "🍀",
-  "💌",
-  "❤️️",
-  "⌛",
-];
-let symbolArrayHard = [
-  "🌠",
-  "🏠",
-  "🏹",
-  "⌛",
-  "🏹",
-  "💌",
-  "❤️️",
-  "🍀",
-  "🧲️",
-  "🌠",
-  "🍀",
-  "💌",
-  "❤️️",
-  "⌛",
-  "🧲️",
-  "🏠",
-];
+let symbols = {
+  symbolArrayEasy: ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"],
+  symbolArrayMedium: [
+    "🌠",
+    "🏹",
+    "⌛",
+    "🏹",
+    "💌",
+    "❤️️",
+    "🍀",
+    "🌠",
+    "🍀",
+    "💌",
+    "❤️️",
+    "⌛",
+  ],
+  symbolArrayHard: [
+    "🌠",
+    "🏠",
+    "🏹",
+    "⌛",
+    "🏹",
+    "💌",
+    "❤️️",
+    "🍀",
+    "🧲️",
+    "🌠",
+    "🍀",
+    "💌",
+    "❤️️",
+    "⌛",
+    "🧲️",
+    "🏠",
+  ],
+};
 
 let counter = 0;
 let clicked = [];
 let pairs = [];
 
 function createBase(symbols) {
+  let testFlipCard = document.querySelector(".flip-card");
+
   for (let i = symbols.length; i > 0; i--) {
-    let createDiv = document.createElement("div");
-    createDiv.setAttribute("class", "cardDiv");
     let createIcon = document.createElement("p");
-    mainGame.appendChild(createDiv);
-    createDiv.appendChild(createIcon);
     const randSelector = Math.floor(Math.random() * i);
     createIcon.textContent = symbols[randSelector];
     symbols.splice(randSelector, 1);
+
+    let newFlipCard = testFlipCard.cloneNode(true);
+    mainGame.appendChild(newFlipCard);
+
+    newFlipCard.classList.add(`flip-class-${i}`);
+    let newFlipCardBack = document.querySelector(
+      `.flip-class-${i}  .flip-card-back`
+    );
+    newFlipCardBack.appendChild(createIcon);
+    newFlipCard.style.visibility = "visible";
   }
 }
 
-function theGame() {
-  symbolDiv = document.querySelectorAll("div.cardDiv");
-  iconSymbol = document.querySelectorAll("p");
+///
+///
+///
+///
+///
+///
 
-  iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
+function theGame() {
+  symbolDiv = document.querySelectorAll("div.flip-card .flip-card-inner");
 
   for (let i = 0; i < symbolDiv.length; i++) {
     symbolDiv[i].addEventListener("click", () => {
-      if (iconSymbol[i].style.visibility === "hidden") {
-        iconSymbol[i].style.visibility = "visible";
+      flipCardBack(symbolDiv[i]);
+      iconSymbol = symbolDiv[i].querySelector("p");
 
-        counter += 1;
-        clicked.push(iconSymbol[i]);
-        turnCounter.textContent = "Moves: " + clicked.length;
+      counter += 1;
+      clicked.push(iconSymbol);
+      turnCounter.textContent = "Moves: " + clicked.length;
 
-        for (let j = 1; j < clicked.length; j += 2) {
-          let plusJ = j - 1;
-          if (
-            clicked[j].textContent === clicked[plusJ].textContent &&
-            !pairs.includes(clicked[j])
-          ) {
-            pairs.push(clicked[j]);
-            pairs.push(clicked[plusJ]);
-            counter = 0;
-          }
+      for (let j = 1; j < clicked.length; j += 2) {
+        let plusJ = j - 1;
+        if (
+          clicked[j].textContent === clicked[plusJ].textContent &&
+          !pairs.includes(clicked[j])
+        ) {
+          pairs.push(clicked[j]);
+          pairs.push(clicked[plusJ]);
+          counter = 0;
+        }
 
-          pairs.forEach((item) => (item.style.visibility = "visible"));
+        if (pairs.length === symbolDiv.length) {
+          showWinMessage();
+        }
 
-          if (pairs.length === symbolDiv.length) {
-            showWinMessage();
-          }
+        if (counter > 2) {
+          let openCards = document.querySelectorAll(".flipped-back");
+          openCards.forEach((item) => flipCardFront(item));
+          console.log(openCards);
 
-          if (counter > 2) {
-            iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
-            counter = 1;
-            iconSymbol[i].style.visibility = "visible";
-          }
+          counter = 1;
         }
       }
       manageTurns();
     });
   }
 }
+
+function flipCardBack(target) {
+  target.style.transform = "rotateY(180deg)";
+  target.classList.add("flipped-back");
+
+  let targetClasses = Array.from(target.classList);
+
+  if (targetClasses.includes("flipped-front")) {
+    target.classList.remove("flipped-front");
+  }
+}
+
+function flipCardFront(target) {
+  target.style.transform = "rotateY(0deg)";
+  target.classList.add("flipped-front");
+
+  let targetClasses = Array.from(target.classList);
+
+  if (targetClasses.includes("flipped-back")) {
+    target.classList.remove("flipped-back");
+  }
+}
+
+///
+///
+///
+///
+///
+///
 
 function manageTurns() {
   let selectedMoveCount = document.querySelector(`[name="diff"]:checked`).value;
@@ -148,14 +190,16 @@ introForm.addEventListener("submit", (event) => {
 
   introForm.style.display = "none";
   mainGame.style.display = "flex";
+  document.querySelector(".game-result-board").style.display = "flex";
 
   createBase(
     selectedBoardSize === "smallBoard"
-      ? symbolArrayEasy
+      ? symbols.symbolArrayEasy
       : selectedBoardSize === "medBoard"
-      ? symbolArrayMedium
-      : symbolArrayHard
+      ? symbols.symbolArrayMedium
+      : symbols.symbolArrayHard
   );
+
   theGame();
   countTime();
 });
@@ -192,9 +236,7 @@ function countTime() {
 }
 
 function resetGame() {
-  if (minutes > 0) {
-    minutes = -1;
-  }
+  minutes = 0;
   seconds = -1;
   counter = 0;
   clicked = [];
@@ -220,9 +262,26 @@ function loadResults() {
 }
 loadResults();
 
-document.querySelector(
-  ".testShowResults"
-).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
+function renderBestResults() {
+  let resultsDiv = document.querySelector(".testShowResults");
+  let resultsKeys = Object.keys(results);
+  resultsKeys.forEach((key) => {
+    let resultLine = document.createElement("h5");
+    resultsDiv.appendChild(resultLine);
+    resultLine.setAttribute("class", `result-${key}`);
+  });
+  document.querySelector(".result-won").innerText = `WON: ${results.won}`;
+  document.querySelector(".result-lost").innerText = `LOST: ${results.lost}`;
+  document.querySelector(
+    ".result-bestTime"
+  ).innerText = `BEST TIME: ${results.bestTime}`;
+}
+
+renderBestResults();
+
+// document.querySelector(
+//   ".testShowResults"
+// ).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
 
 async function compareTime() {
   let currentBestTime = results.bestTime;
