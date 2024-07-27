@@ -17,7 +17,7 @@ main {
 
 .main-game-board {
   display: none;
-  width: 30%;
+  width: 50%;
   padding: 40px;
   justify-content: center;
   flex-wrap: wrap;
@@ -199,6 +199,10 @@ input[type="submit"]:hover,
   /* Remove perspective if you don't want the 3D effect */
 }
 
+main > .flip-card {
+  display: none;
+}
+
 /* This container is needed to position the front and back side */
 .flip-card-inner {
   position: relative;
@@ -237,4 +241,8 @@ input[type="submit"]:hover,
   background-color: rgb(241, 241, 241);
   color: white;
   transform: rotateY(180deg);
+}
+
+.paired-card {
+  -webkit-transition: none;
 }

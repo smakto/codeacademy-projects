@@ -85,9 +85,10 @@ function theGame() {
       iconSymbol = symbolDiv[i].querySelector("p");
 
       counter += 1;
-      clicked.push(iconSymbol);
+      clicked.push(symbolDiv[i]);
       turnCounter.textContent = "Moves: " + clicked.length;
-
+      // console.log(counter);
+      // console.log(clicked);
       for (let j = 1; j < clicked.length; j += 2) {
         let plusJ = j - 1;
         if (
@@ -96,6 +97,10 @@ function theGame() {
         ) {
           pairs.push(clicked[j]);
           pairs.push(clicked[plusJ]);
+
+          console.log("clickedJ", clicked[j]);
+          console.log("clickedJplus", clicked[plusJ]);
+
           counter = 0;
         }
 
@@ -103,12 +108,19 @@ function theGame() {
           showWinMessage();
         }
 
+        pairs.forEach((item) => {
+          item.classList.remove("flipped-front");
+          item.classList.remove("flipped-back");
+        });
+
+        console.log("pairs", pairs);
+
         if (counter > 2) {
           let openCards = document.querySelectorAll(".flipped-back");
           openCards.forEach((item) => flipCardFront(item));
-          console.log(openCards);
-
           counter = 1;
+          flipCardBack(symbolDiv[i]);
+          // console.log(openCards);
         }
       }
       manageTurns();
@@ -258,7 +270,6 @@ function loadResults() {
     window.localStorage.length > 0
       ? JSON.parse(localStorage.getItem("personalResults"))
       : { won: 0, lost: 0, bestTime: 0 };
-  console.log(results.bestTime);
 }
 loadResults();
 

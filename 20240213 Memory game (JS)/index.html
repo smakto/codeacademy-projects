@@ -57,12 +57,18 @@
       <div class="diff-selection">
         <div class="move-limit">
           <h2>Move limit</h2>
-          <input type="radio" name="diff" id="easyDiff" value="unlimited" />
+          <input
+            type="radio"
+            name="diff"
+            id="easyDiff"
+            value="unlimited"
+            checked
+          />
           <label class="level-label" for="easyDiff"
             >Easy - unlimited moves</label
           >
           <br />
-          <input type="radio" name="diff" id="medDiff" value="20" checked />
+          <input type="radio" name="diff" id="medDiff" value="20" />
           <label class="level-label" for="medDiff">Medium - 20 moves</label>
           <br />
           <input type="radio" name="diff" id="hardDiff" value="12" />
@@ -77,12 +83,13 @@
             name="time"
             id="unlimitedTime"
             value="unlimited"
+            checked
           />
           <label class="time-limit-label" for="unlimitedTime"
             >Easy - unlimited time</label
           >
           <br />
-          <input type="radio" name="time" id="medTime" value="60" checked />
+          <input type="radio" name="time" id="medTime" value="60" />
           <label class="time-limit-label" for="medTime"
             >Medium - 60 seconds</label
           >
@@ -101,13 +108,18 @@
             name="boardSize"
             id="smallBoard"
             value="smallBoard"
-            checked
           />
           <label class="board-size-label" for="smallBoard"
             >Small - 4 pairs</label
           >
           <br />
-          <input type="radio" name="boardSize" id="medBoard" value="medBoard" />
+          <input
+            type="radio"
+            name="boardSize"
+            id="medBoard"
+            value="medBoard"
+            checked
+          />
           <label class="board-size-label" for="medBoard"
             >Medium - 6 pairs</label
           >
