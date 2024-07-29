@@ -87,8 +87,7 @@ function theGame() {
       counter += 1;
       clicked.push(symbolDiv[i]);
       turnCounter.textContent = "Moves: " + clicked.length;
-      // console.log(counter);
-      // console.log(clicked);
+
       for (let j = 1; j < clicked.length; j += 2) {
         let plusJ = j - 1;
         if (
@@ -97,30 +96,23 @@ function theGame() {
         ) {
           pairs.push(clicked[j]);
           pairs.push(clicked[plusJ]);
-
-          console.log("clickedJ", clicked[j]);
-          console.log("clickedJplus", clicked[plusJ]);
-
           counter = 0;
         }
 
-        if (pairs.length === symbolDiv.length) {
-          showWinMessage();
-        }
+        // if (pairs.length === symbolDiv.length - 1) {
+        //   showWinMessage();
+        // }
 
         pairs.forEach((item) => {
           item.classList.remove("flipped-front");
           item.classList.remove("flipped-back");
         });
 
-        console.log("pairs", pairs);
-
         if (counter > 2) {
           let openCards = document.querySelectorAll(".flipped-back");
           openCards.forEach((item) => flipCardFront(item));
           counter = 1;
           flipCardBack(symbolDiv[i]);
-          // console.log(openCards);
         }
       }
       manageTurns();
@@ -150,48 +142,71 @@ function flipCardFront(target) {
   }
 }
 
-///
-///
-///
-///
-///
-///
-
 function manageTurns() {
   let selectedMoveCount = document.querySelector(`[name="diff"]:checked`).value;
-  if (selectedMoveCount !== "unlimited" && selectedMoveCount < clicked.length) {
+
+  if (pairs.length === symbolDiv.length - 1) {
+    showWinMessage();
+  } else if (
+    selectedMoveCount !== "unlimited" &&
+    selectedMoveCount < clicked.length
+  ) {
     showLoseMessage();
   }
 }
 
 function showWinMessage() {
-  winMsg = document.createElement("h1");
-  winMsg.setAttribute("class", "win-message");
-  document.body.append(winMsg);
-  results.won += 1;
+  let message = document.createElement("h2");
+  let time = document.createElement("h3");
+  let moves = document.createElement("h3");
   let checkTime = compareTime();
+
+  message.textContent = "WON!";
+
+  checkTime
+    ? (time.textContent = `Time: ${minutesToShow}:${secondsToShow}. NEW BEST!`)
+    : (time.textContent = `Time: ${minutesToShow}:${secondsToShow}.`);
+  moves.textContent = `Moves: ${clicked.length}`;
+
   if (checkTime) {
     results.bestTime = `${minutesToShow}:${secondsToShow}`;
   }
+
+  console.log(checkTime);
+
+  let gameResults = [moves, time, message];
+
+  gameResults.forEach((item) => {
+    document.querySelector(".resultScreenBox").append(item);
+  });
+
+  turnCounter.style.display = "none";
+  results.won += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
-  winMsg.textContent = "WIN! " + "Moves: " + clicked.length;
-  turnCounter.style.display = "none";
+  document.querySelector(".resultScreen").style.display = "flex";
 }
 
 function showLoseMessage() {
-  let loseMsg = document.createElement("h2");
-  loseMsg.setAttribute("class", "lose-message");
-  loseMsg.textContent = `LOST! Moves ${clicked.length}.  Time ${minutesToShow}:${secondsToShow}`;
+  let message = document.createElement("h2");
+  let time = document.createElement("h3");
+  let moves = document.createElement("h3");
+
+  message.textContent = "LOST!";
+  time.textContent = `Time: ${minutesToShow}:${secondsToShow}`;
+  moves.textContent = `Moves: ${clicked.length}`;
+
+  let gameResults = [moves, time, message];
+
+  gameResults.forEach((item) => {
+    document.querySelector(".resultScreenBox").append(item);
+  });
+
   turnCounter.style.display = "none";
   results.lost += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
-  document.querySelector(".resultScreen").style.display = "block";
-  document.querySelector(".resultScreenBox").append(loseMsg);
-  // setTimeout(function () {
-  //   location.reload();
-  // }, 5000);
+  document.querySelector(".resultScreen").style.display = "flex";
 }
 
 introForm.addEventListener("submit", (event) => {
@@ -201,7 +216,7 @@ introForm.addEventListener("submit", (event) => {
   ).value;
 
   introForm.style.display = "none";
-  mainGame.style.display = "flex";
+  mainGame.style.display = "block";
   document.querySelector(".game-result-board").style.display = "flex";
 
   createBase(
@@ -244,7 +259,7 @@ function countTime() {
     document.querySelector(
       ".timer"
     ).textContent = `Time:  ${minutesToShow}:${secondsToShow}`;
-  }, 1000);
+  }, 100);
 }
 
 function resetGame() {
@@ -264,7 +279,6 @@ document.querySelector(".reset-button").addEventListener("click", () => {
 ///////// Personal results @ local storage
 
 let results;
-
 function loadResults() {
   results =
     window.localStorage.length > 0
@@ -272,6 +286,7 @@ function loadResults() {
       : { won: 0, lost: 0, bestTime: 0 };
 }
 loadResults();
+console.log(results);
 
 function renderBestResults() {
   let resultsDiv = document.querySelector(".testShowResults");
@@ -290,19 +305,26 @@ function renderBestResults() {
 
 renderBestResults();
 
-// document.querySelector(
-//   ".testShowResults"
-// ).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
+document.querySelector(
+  ".testShowResults"
+).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
 
-async function compareTime() {
+function compareTime() {
   let currentBestTime = results.bestTime;
-  const currentBestSplit = currentBestTime.split(":");
-  let bestSplitNumber = currentBestSplit.map((item) => (item = Number(item)));
+  let isTimeBetter = true;
+  if (currentBestTime !== 0) {
+    const currentBestSplit = currentBestTime.split(":");
+    let bestSplitNumber = currentBestSplit.map((item) => (item = Number(item)));
 
-  let bestTimeInSeconds = bestSplitNumber[0] * 60 + bestSplitNumber[1];
-  let currentTimeInSeconds = minutes * 60 + seconds;
+    let bestTimeInSeconds = bestSplitNumber[0] * 60 + bestSplitNumber[1];
+    let currentTimeInSeconds = minutes * 60 + seconds;
+    console.log("currentTimeInSeconds", currentTimeInSeconds);
+    console.log("bestTimeInSeconds", bestTimeInSeconds);
 
-  let isTimeBetter = bestTimeInSeconds > currentTimeInSeconds ? true : false;
+    bestTimeInSeconds > currentTimeInSeconds
+      ? (isTimeBetter = true)
+      : (isTimeBetter = false);
+  }
   return isTimeBetter;
 }
 
