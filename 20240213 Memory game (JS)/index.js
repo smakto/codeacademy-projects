@@ -51,11 +51,13 @@ let pairs = [];
 function createBase(symbols) {
   let testFlipCard = document.querySelector(".flip-card");
 
-  for (let i = symbols.length; i > 0; i--) {
+  let symbolsToRender = Array.from(symbols);
+
+  for (let i = symbolsToRender.length; i > 0; i--) {
     let createIcon = document.createElement("p");
     const randSelector = Math.floor(Math.random() * i);
-    createIcon.textContent = symbols[randSelector];
-    symbols.splice(randSelector, 1);
+    createIcon.textContent = symbolsToRender[randSelector];
+    symbolsToRender.splice(randSelector, 1);
 
     let newFlipCard = testFlipCard.cloneNode(true);
     mainGame.appendChild(newFlipCard);
@@ -81,41 +83,45 @@ function theGame() {
 
   for (let i = 0; i < symbolDiv.length; i++) {
     symbolDiv[i].addEventListener("click", () => {
-      flipCardBack(symbolDiv[i]);
-      iconSymbol = symbolDiv[i].querySelector("p");
+      if (
+        symbolDiv[i].classList.contains("flipped-back") ||
+        pairs.includes(symbolDiv[i])
+      ) {
+        symbolDiv[i].removeEventListener("click", null);
+      } else {
+        flipCardBack(symbolDiv[i]);
+        iconSymbol = symbolDiv[i].querySelector("p");
 
-      counter += 1;
-      clicked.push(symbolDiv[i]);
-      turnCounter.textContent = "Moves: " + clicked.length;
+        counter += 1;
+        clicked.push(symbolDiv[i]);
+        turnCounter.textContent = "Moves: " + clicked.length;
 
-      for (let j = 1; j < clicked.length; j += 2) {
-        let plusJ = j - 1;
-        if (
-          clicked[j].textContent === clicked[plusJ].textContent &&
-          !pairs.includes(clicked[j])
-        ) {
-          pairs.push(clicked[j]);
-          pairs.push(clicked[plusJ]);
-          counter = 0;
+        for (let j = 1; j < clicked.length; j += 2) {
+          let plusJ = j - 1;
+          if (
+            clicked[j].textContent === clicked[plusJ].textContent &&
+            !pairs.includes(clicked[j])
+          ) {
+            pairs.push(clicked[j]);
+            pairs.push(clicked[plusJ]);
+            counter = 0;
+          }
+
+          pairs.forEach((item) => {
+            item.classList.remove("flipped-front");
+            item.classList.remove("flipped-back");
+            item.removeEventListener("click", null);
+          });
+
+          if (counter > 2) {
+            let openCards = document.querySelectorAll(".flipped-back");
+            openCards.forEach((item) => flipCardFront(item));
+            counter = 1;
+            flipCardBack(symbolDiv[i]);
+          }
         }
-
-        // if (pairs.length === symbolDiv.length - 1) {
-        //   showWinMessage();
-        // }
-
-        pairs.forEach((item) => {
-          item.classList.remove("flipped-front");
-          item.classList.remove("flipped-back");
-        });
-
-        if (counter > 2) {
-          let openCards = document.querySelectorAll(".flipped-back");
-          openCards.forEach((item) => flipCardFront(item));
-          counter = 1;
-          flipCardBack(symbolDiv[i]);
-        }
+        manageTurns();
       }
-      manageTurns();
     });
   }
 }
@@ -171,8 +177,6 @@ function showWinMessage() {
   if (checkTime) {
     results.bestTime = `${minutesToShow}:${secondsToShow}`;
   }
-
-  console.log(checkTime);
 
   let gameResults = [moves, time, message];
 
@@ -259,21 +263,50 @@ function countTime() {
     document.querySelector(
       ".timer"
     ).textContent = `Time:  ${minutesToShow}:${secondsToShow}`;
-  }, 100);
+  }, 1000);
 }
 
-function resetGame() {
+function softResetGame() {
+  clearInterval(intervalTimer);
+
+  let selectedBoardSize = document.querySelector(
+    `[name="boardSize"]:checked`
+  ).value;
   minutes = 0;
   seconds = -1;
   counter = 0;
   clicked = [];
   pairs = [];
   turnCounter.textContent = "Moves: 0";
-  iconSymbol.forEach((item) => (item.style.visibility = "hidden"));
+  countTime();
+
+  symbolDiv.forEach((item) => {
+    flipCardFront(item);
+  });
+
+  let testFlipCard = document.querySelectorAll(".flip-card");
+  testFlipCard = Array.from(testFlipCard).splice(1);
+
+  testFlipCard.forEach((item) => {
+    item.remove();
+  });
+
+  document.querySelector(".resultScreen").style.display = "none";
+  turnCounter.style.display = "block";
+
+  createBase(
+    selectedBoardSize === "smallBoard"
+      ? symbols.symbolArrayEasy
+      : selectedBoardSize === "medBoard"
+      ? symbols.symbolArrayMedium
+      : symbols.symbolArrayHard
+  );
+
+  theGame();
 }
 
 document.querySelector(".reset-button").addEventListener("click", () => {
-  resetGame();
+  softResetGame();
 });
 
 ///////// Personal results @ local storage
@@ -286,7 +319,6 @@ function loadResults() {
       : { won: 0, lost: 0, bestTime: 0 };
 }
 loadResults();
-console.log(results);
 
 function renderBestResults() {
   let resultsDiv = document.querySelector(".testShowResults");
@@ -318,8 +350,6 @@ function compareTime() {
 
     let bestTimeInSeconds = bestSplitNumber[0] * 60 + bestSplitNumber[1];
     let currentTimeInSeconds = minutes * 60 + seconds;
-    console.log("currentTimeInSeconds", currentTimeInSeconds);
-    console.log("bestTimeInSeconds", bestTimeInSeconds);
 
     bestTimeInSeconds > currentTimeInSeconds
       ? (isTimeBetter = true)
@@ -329,3 +359,11 @@ function compareTime() {
 }
 
 compareTime();
+
+document.querySelector(".soft-reset-button").addEventListener("click", () => {
+  softResetGame();
+});
+
+document.querySelector(".hard-reset-button").addEventListener("click", () => {
+  window.location.reload();
+});
