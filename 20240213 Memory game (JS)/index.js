@@ -7,7 +7,15 @@ let medDifficulty = document.getElementById("medDiff");
 
 let symbolDiv;
 let iconSymbol;
-
+let results;
+let counter = 0;
+let clicked = [];
+let pairs = [];
+let intervalTimer;
+let minutes = 0;
+let seconds = 0;
+let secondsToShow;
+let minutesToShow;
 let symbols = {
   symbolArrayEasy: ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"],
   symbolArrayMedium: [
@@ -44,13 +52,8 @@ let symbols = {
   ],
 };
 
-let counter = 0;
-let clicked = [];
-let pairs = [];
-
 function createBase(symbols) {
   let testFlipCard = document.querySelector(".flip-card");
-
   let symbolsToRender = Array.from(symbols);
 
   for (let i = symbolsToRender.length; i > 0; i--) {
@@ -71,13 +74,6 @@ function createBase(symbols) {
   }
 }
 
-///
-///
-///
-///
-///
-///
-
 function theGame() {
   symbolDiv = document.querySelectorAll("div.flip-card .flip-card-inner");
 
@@ -91,7 +87,6 @@ function theGame() {
       } else {
         flipCardBack(symbolDiv[i]);
         iconSymbol = symbolDiv[i].querySelector("p");
-
         counter += 1;
         clicked.push(symbolDiv[i]);
         turnCounter.textContent = "Moves: " + clicked.length;
@@ -163,16 +158,16 @@ function manageTurns() {
 
 function showWinMessage() {
   let message = document.createElement("h2");
-  let time = document.createElement("h3");
   let moves = document.createElement("h3");
+
+  let time = document.createElement("h3");
   let checkTime = compareTime();
 
   message.textContent = "WON!";
-
+  moves.textContent = `Moves: ${clicked.length}`;
   checkTime
     ? (time.textContent = `Time: ${minutesToShow}:${secondsToShow}. NEW BEST!`)
     : (time.textContent = `Time: ${minutesToShow}:${secondsToShow}.`);
-  moves.textContent = `Moves: ${clicked.length}`;
 
   if (checkTime) {
     results.bestTime = `${minutesToShow}:${secondsToShow}`;
@@ -234,12 +229,6 @@ introForm.addEventListener("submit", (event) => {
   theGame();
   countTime();
 });
-
-let intervalTimer;
-let minutes = 0;
-let seconds = 0;
-let secondsToShow;
-let minutesToShow;
 
 function countTime() {
   intervalTimer = setInterval(function () {
@@ -309,37 +298,29 @@ document.querySelector(".reset-button").addEventListener("click", () => {
   softResetGame();
 });
 
-///////// Personal results @ local storage
-
-let results;
 function loadResults() {
   results =
     window.localStorage.length > 0
       ? JSON.parse(localStorage.getItem("personalResults"))
       : { won: 0, lost: 0, bestTime: 0 };
 }
-loadResults();
 
 function renderBestResults() {
   let resultsDiv = document.querySelector(".testShowResults");
   let resultsKeys = Object.keys(results);
+
   resultsKeys.forEach((key) => {
     let resultLine = document.createElement("h5");
-    resultsDiv.appendChild(resultLine);
     resultLine.setAttribute("class", `result-${key}`);
+    resultsDiv.append(resultLine);
   });
-  document.querySelector(".result-won").innerText = `WON: ${results.won}`;
-  document.querySelector(".result-lost").innerText = `LOST: ${results.lost}`;
+
+  document.querySelector(".result-won").textContent = `WON: ${results.won}`;
+  document.querySelector(".result-lost").textContent = `LOST: ${results.lost}`;
   document.querySelector(
     ".result-bestTime"
-  ).innerText = `BEST TIME: ${results.bestTime}`;
+  ).textContent = `BEST TIME: ${results.bestTime}`;
 }
-
-renderBestResults();
-
-document.querySelector(
-  ".testShowResults"
-).textContent = `WON: ${results.won}, LOST: ${results.lost} BEST TIME: ${results.bestTime}`;
 
 function compareTime() {
   let currentBestTime = results.bestTime;
@@ -358,8 +339,6 @@ function compareTime() {
   return isTimeBetter;
 }
 
-compareTime();
-
 document.querySelector(".soft-reset-button").addEventListener("click", () => {
   softResetGame();
 });
@@ -367,3 +346,7 @@ document.querySelector(".soft-reset-button").addEventListener("click", () => {
 document.querySelector(".hard-reset-button").addEventListener("click", () => {
   window.location.reload();
 });
+
+loadResults();
+renderBestResults();
+compareTime();
