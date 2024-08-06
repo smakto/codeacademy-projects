@@ -175,15 +175,27 @@ function showWinMessage() {
 
   let gameResults = [moves, time, message];
 
-  gameResults.forEach((item) => {
-    document.querySelector(".resultScreenBox").append(item);
-  });
+  let endgameScreen = document.querySelector(".game-results-div");
+
+  if (endgameScreen === null) {
+    let gameResultsDiv = document.createElement("div");
+    gameResultsDiv.setAttribute("class", "game-results-div");
+    document.querySelector(".resultScreenBox").append(gameResultsDiv);
+    gameResults.forEach((item) => {
+      gameResultsDiv.append(item);
+    });
+  } else {
+    gameResults.forEach((item) => {
+      endgameScreen.append(item);
+    });
+  }
 
   turnCounter.style.display = "none";
   results.won += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
   document.querySelector(".resultScreen").style.display = "flex";
+  renderBestResults();
 }
 
 function showLoseMessage() {
@@ -196,16 +208,28 @@ function showLoseMessage() {
   moves.textContent = `Moves: ${clicked.length}`;
 
   let gameResults = [moves, time, message];
+  let endgameScreen = document.querySelector(".game-results-div");
 
-  gameResults.forEach((item) => {
-    document.querySelector(".resultScreenBox").append(item);
-  });
+  if (endgameScreen === null) {
+    let gameResultsDiv = document.createElement("div");
+    gameResultsDiv.setAttribute("class", "game-results-div");
+    document.querySelector(".resultScreenBox").append(gameResultsDiv);
+    gameResults.forEach((item) => {
+      gameResultsDiv.append(item);
+    });
+  } else {
+    gameResults.forEach((item) => {
+      endgameScreen.append(item);
+    });
+  }
 
   turnCounter.style.display = "none";
   results.lost += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
   document.querySelector(".resultScreen").style.display = "flex";
+
+  renderBestResults();
 }
 
 introForm.addEventListener("submit", (event) => {
@@ -257,6 +281,7 @@ function countTime() {
 
 function softResetGame() {
   clearInterval(intervalTimer);
+  document.querySelector(".game-results-div").innerHTML = "";
 
   let selectedBoardSize = document.querySelector(
     `[name="boardSize"]:checked`
@@ -307,6 +332,7 @@ function loadResults() {
 
 function renderBestResults() {
   let resultsDiv = document.querySelector(".testShowResults");
+  resultsDiv.innerHTML = "";
   let resultsKeys = Object.keys(results);
 
   resultsKeys.forEach((key) => {
