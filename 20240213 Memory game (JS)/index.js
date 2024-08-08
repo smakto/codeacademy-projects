@@ -1,7 +1,8 @@
+/// Variables:
+
 let mainGame = document.querySelector(".main-game-board");
 let turnCounter = document.querySelector("h5.turn-counter");
 let introForm = document.querySelector("form");
-
 let hardDifficulty = document.getElementById("hardDiff");
 let medDifficulty = document.getElementById("medDiff");
 
@@ -16,7 +17,7 @@ let minutes = 0;
 let seconds = 0;
 let secondsToShow;
 let minutesToShow;
-let symbols = {
+const symbols = {
   symbolArrayEasy: ["🌠", "🏹", "🏹", "💌", "🍀", "🌠", "🍀", "💌"],
   symbolArrayMedium: [
     "🌠",
@@ -52,23 +53,23 @@ let symbols = {
   ],
 };
 
+/// Game creation:
+
 function createBase(symbols) {
-  let testFlipCard = document.querySelector(".flip-card");
-  let symbolsToRender = Array.from(symbols);
+  const firstFlipCard = document.querySelector(".flip-card");
+  const symbolsToRender = Array.from(symbols);
 
   for (let i = symbolsToRender.length; i > 0; i--) {
-    let createIcon = document.createElement("p");
+    const createIcon = document.createElement("p");
     const randSelector = Math.floor(Math.random() * i);
     createIcon.textContent = symbolsToRender[randSelector];
     symbolsToRender.splice(randSelector, 1);
 
-    let newFlipCard = testFlipCard.cloneNode(true);
+    const newFlipCard = firstFlipCard.cloneNode(true);
     mainGame.appendChild(newFlipCard);
 
     newFlipCard.classList.add(`flip-class-${i}`);
-    let newFlipCardBack = document.querySelector(
-      `.flip-class-${i}  .flip-card-back`
-    );
+    const newFlipCardBack = newFlipCard.querySelector(`.flip-card-back`);
     newFlipCardBack.appendChild(createIcon);
     newFlipCard.style.visibility = "visible";
   }
@@ -121,6 +122,8 @@ function theGame() {
   }
 }
 
+/// Card flip functions:
+
 function flipCardBack(target) {
   target.style.transform = "rotateY(180deg)";
   target.classList.add("flipped-back");
@@ -143,25 +146,17 @@ function flipCardFront(target) {
   }
 }
 
-function manageTurns() {
-  let selectedMoveCount = document.querySelector(`[name="diff"]:checked`).value;
-
-  if (pairs.length === symbolDiv.length - 1) {
-    showWinMessage();
-  } else if (
-    selectedMoveCount !== "unlimited" &&
-    selectedMoveCount < clicked.length
-  ) {
-    showLoseMessage();
-  }
-}
+/// WIN/LOSE message handling:
 
 function showWinMessage() {
   let message = document.createElement("h2");
   let moves = document.createElement("h3");
-
   let time = document.createElement("h3");
   let checkTime = compareTime();
+
+  if (checkTime) {
+    results.bestTime = `${minutesToShow}:${secondsToShow}`;
+  }
 
   message.textContent = "WON!";
   moves.textContent = `Moves: ${clicked.length}`;
@@ -169,18 +164,13 @@ function showWinMessage() {
     ? (time.textContent = `Time: ${minutesToShow}:${secondsToShow}. NEW BEST!`)
     : (time.textContent = `Time: ${minutesToShow}:${secondsToShow}.`);
 
-  if (checkTime) {
-    results.bestTime = `${minutesToShow}:${secondsToShow}`;
-  }
-
   let gameResults = [moves, time, message];
-
   let endgameScreen = document.querySelector(".game-results-div");
 
   if (endgameScreen === null) {
     let gameResultsDiv = document.createElement("div");
     gameResultsDiv.setAttribute("class", "game-results-div");
-    document.querySelector(".resultScreenBox").append(gameResultsDiv);
+    document.querySelector(".game-finish-message").append(gameResultsDiv);
     gameResults.forEach((item) => {
       gameResultsDiv.append(item);
     });
@@ -194,7 +184,7 @@ function showWinMessage() {
   results.won += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
-  document.querySelector(".resultScreen").style.display = "flex";
+  document.querySelector(".game-finish-container").style.display = "flex";
   renderBestResults();
 }
 
@@ -213,7 +203,7 @@ function showLoseMessage() {
   if (endgameScreen === null) {
     let gameResultsDiv = document.createElement("div");
     gameResultsDiv.setAttribute("class", "game-results-div");
-    document.querySelector(".resultScreenBox").append(gameResultsDiv);
+    document.querySelector(".game-finish-message").append(gameResultsDiv);
     gameResults.forEach((item) => {
       gameResultsDiv.append(item);
     });
@@ -227,32 +217,24 @@ function showLoseMessage() {
   results.lost += 1;
   localStorage.setItem("personalResults", JSON.stringify(results));
   clearInterval(intervalTimer);
-  document.querySelector(".resultScreen").style.display = "flex";
-
+  document.querySelector(".game-finish-container").style.display = "flex";
   renderBestResults();
 }
 
-introForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  let selectedBoardSize = document.querySelector(
-    `[name="boardSize"]:checked`
-  ).value;
+/// Support functions:
 
-  introForm.style.display = "none";
-  mainGame.style.display = "block";
-  document.querySelector(".game-result-board").style.display = "flex";
+function manageTurns() {
+  let selectedMoveCount = document.querySelector(`[name="diff"]:checked`).value;
 
-  createBase(
-    selectedBoardSize === "smallBoard"
-      ? symbols.symbolArrayEasy
-      : selectedBoardSize === "medBoard"
-      ? symbols.symbolArrayMedium
-      : symbols.symbolArrayHard
-  );
-
-  theGame();
-  countTime();
-});
+  if (pairs.length === symbolDiv.length - 1) {
+    showWinMessage();
+  } else if (
+    selectedMoveCount !== "unlimited" &&
+    selectedMoveCount < clicked.length
+  ) {
+    showLoseMessage();
+  }
+}
 
 function countTime() {
   intervalTimer = setInterval(function () {
@@ -281,7 +263,10 @@ function countTime() {
 
 function softResetGame() {
   clearInterval(intervalTimer);
-  document.querySelector(".game-results-div").innerHTML = "";
+  let currentResults = document.querySelector(".game-results-div");
+  if (currentResults) {
+    currentResults.innerHTML = "";
+  }
 
   let selectedBoardSize = document.querySelector(
     `[name="boardSize"]:checked`
@@ -298,14 +283,14 @@ function softResetGame() {
     flipCardFront(item);
   });
 
-  let testFlipCard = document.querySelectorAll(".flip-card");
-  testFlipCard = Array.from(testFlipCard).splice(1);
+  let cardsToReset = document.querySelectorAll(".flip-card");
+  cardsToReset = Array.from(cardsToReset).splice(1);
 
-  testFlipCard.forEach((item) => {
+  cardsToReset.forEach((item) => {
     item.remove();
   });
 
-  document.querySelector(".resultScreen").style.display = "none";
+  document.querySelector(".game-finish-container").style.display = "none";
   turnCounter.style.display = "block";
 
   createBase(
@@ -319,10 +304,6 @@ function softResetGame() {
   theGame();
 }
 
-document.querySelector(".reset-button").addEventListener("click", () => {
-  softResetGame();
-});
-
 function loadResults() {
   results =
     window.localStorage.length > 0
@@ -331,7 +312,7 @@ function loadResults() {
 }
 
 function renderBestResults() {
-  let resultsDiv = document.querySelector(".testShowResults");
+  let resultsDiv = document.querySelector(".best-user-results");
   resultsDiv.innerHTML = "";
   let resultsKeys = Object.keys(results);
 
@@ -365,12 +346,40 @@ function compareTime() {
   return isTimeBetter;
 }
 
+/// Listeners & function call:
+
+introForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  let selectedBoardSize = document.querySelector(
+    `[name="boardSize"]:checked`
+  ).value;
+
+  introForm.style.display = "none";
+  mainGame.style.display = "block";
+  document.querySelector(".game-result-board").style.display = "flex";
+
+  createBase(
+    selectedBoardSize === "smallBoard"
+      ? symbols.symbolArrayEasy
+      : selectedBoardSize === "medBoard"
+      ? symbols.symbolArrayMedium
+      : symbols.symbolArrayHard
+  );
+
+  theGame();
+  countTime();
+});
+
 document.querySelector(".soft-reset-button").addEventListener("click", () => {
   softResetGame();
 });
 
 document.querySelector(".hard-reset-button").addEventListener("click", () => {
   window.location.reload();
+});
+
+document.querySelector(".reset-button").addEventListener("click", () => {
+  softResetGame();
 });
 
 loadResults();
